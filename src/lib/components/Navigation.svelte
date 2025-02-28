@@ -14,8 +14,8 @@
       <li class:active={isActive("/")}>
         <a href="/" use:link>ホーム</a>
       </li>
-      <li class:active={isActive("/tool1")}>
-        <a href="/tool1" use:link>ツール1</a>
+      <li class:active={isActive("/backlog-convert")}>
+        <a href="/backlog-convert" use:link>BacklogConvert</a>
       </li>
     </ul>
   </nav>

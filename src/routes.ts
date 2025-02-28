@@ -1,6 +1,6 @@
 // 各ページコンポーネントをインポート
 import Home from './lib/components/Home.svelte';
-import Tool1 from './lib/components/tools/Tool1.svelte';
+import BacklogConvert from './lib/components/tools/backlogConvert/BacklogConvert.svelte';
 import NotFound from './lib/components/NotFound.svelte';
 
 // ルート定義
@@ -9,7 +9,7 @@ const routes = {
   '/': Home,
   
   // 各ツールページ
-  '/tool1': Tool1,
+  '/backlog-convert': BacklogConvert,
   
   // 存在しないルートへのアクセス時
   '*': NotFound
