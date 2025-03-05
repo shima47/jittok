@@ -346,8 +346,6 @@
 </script>
 
 <div class="container">
-  <h1 class="main-title">マークダウンからBacklog記法への変換ツール</h1>
-
   <div class="editor-container">
     <div class="editor-panel">
       <div class="panel-header">
