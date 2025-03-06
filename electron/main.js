@@ -22,7 +22,7 @@ function createWindow() {
   // 開発環境ではlocalhostのURLを読み込み、本番環境ではビルドされたファイルを読み込む
   const startUrl = isDev
     ? 'http://localhost:5173'
-    : `file://${path.join(__dirname, '../../dist/index.html')}`;
+    : `file://${path.join(__dirname, '../dist/index.html')}`;
 
   mainWindow.loadURL(startUrl);
 
