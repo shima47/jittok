@@ -50,6 +50,9 @@
           </div>
         </a>
       </li>
+      <li class:active={isActive("/url-decode")}>
+        <a href="/url-decode" use:link>URL Decode</a>
+      </li>
     </ul>
   </nav>
 </header>
