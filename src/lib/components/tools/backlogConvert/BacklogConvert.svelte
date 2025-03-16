@@ -533,12 +533,6 @@
     margin: 0 auto;
   }
 
-  .main-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-
   /* エディタコンテナ */
   .editor-container {
     display: flex;
