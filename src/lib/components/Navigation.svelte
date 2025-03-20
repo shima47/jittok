@@ -2,7 +2,7 @@
   import { link, location } from "svelte-spa-router";
   import homeIcon from "../icons/home.svg?raw";
   import backlogIcon from "../icons/backlog.svg?raw";
-  import convertIcon from "../icons/convert.svg?raw";
+  import markdownIcon from "../icons/markdown.svg?raw";
   import urlDecodeIcon from "../icons/url-decode.svg?raw";
 
   // アクティブなルートを判定するヘルパー関数
@@ -26,7 +26,7 @@
         <a href="/backlog-convert" use:link aria-label="Backlog変換">
           <div class="icon-container">
             {@html backlogIcon}
-            {@html convertIcon}
+            {@html markdownIcon}
           </div>
         </a>
       </li>
