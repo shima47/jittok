@@ -10,7 +10,7 @@
     "electron:build": "vite build && cross-env NODE_ENV=production electron-builder",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
-    "generate-icons": "electron-icon-builder --input=./src/assets/electron-icon.png --output=./electron"
+    "generate-icons": "electron-icon-builder --input=./electron/electron-icon.png --output=./electron"
   },
   "main": "electron/main.js",
   "build": {
