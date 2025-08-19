@@ -8,6 +8,10 @@
   let autoConvert = true;
   let copySuccess = "";
   let syncScroll = true;
+  
+  // 箇条書きの設定
+  let indentType = "space"; // "space" または "tab"
+  let spacesPerLevel = 2; // スペースの場合、階層あたりのスペース数
 
   // DOM参照
   let markdownRef: HTMLTextAreaElement;
@@ -287,7 +291,14 @@
 
     // リスト (マークダウン - → Backlog -)
     result = result.replace(/^(\s*)-\s+(.+)$/gm, (match, indent, content) => {
-      const level = Math.floor(indent.length / 2) + 1;
+      let level;
+      if (indentType === "tab") {
+        // タブの場合、タブの数でレベルを計算
+        level = (indent.match(/\t/g) || []).length + 1;
+      } else {
+        // スペースの場合、設定されたスペース数でレベルを計算
+        level = Math.floor(indent.length / spacesPerLevel) + 1;
+      }
       return "-".repeat(level) + " " + content;
     });
 
@@ -384,6 +395,26 @@
           />
           <label for="syncScroll" class="option-label">スクロール同期</label>
         </div>
+        <div class="option-item">
+          <label for="indentType" class="option-label">インデントの種類:</label>
+          <select id="indentType" bind:value={indentType} class="select-input">
+            <option value="space">スペース</option>
+            <option value="tab">タブ</option>
+          </select>
+        </div>
+        {#if indentType === "space"}
+          <div class="option-item">
+            <label for="spacesPerLevel" class="option-label">階層あたりのスペース数:</label>
+            <input
+              type="number"
+              id="spacesPerLevel"
+              bind:value={spacesPerLevel}
+              min="1"
+              max="8"
+              class="number-input"
+            />
+          </div>
+        {/if}
       </div>
     </div>
 
@@ -607,6 +638,23 @@
   }
 
   .option-label {
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
+  .select-input {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
+  .number-input {
+    width: 4rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
     font-size: 0.875rem;
     color: #4b5563;
   }
