@@ -10,7 +10,7 @@
   let syncScroll = true;
   
   // 箇条書きの設定
-  let indentType = "space"; // "space" または "tab"
+  let indentType = "tab"; // "space" または "tab"
   let spacesPerLevel = 2; // スペースの場合、階層あたりのスペース数
 
   // DOM参照
