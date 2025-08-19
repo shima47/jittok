@@ -9,12 +9,22 @@
     "electron:dev": "concurrently \"vite dev\" \"cross-env NODE_ENV=development electron electron/main.js\"",
     "electron:build": "vite build && cross-env NODE_ENV=production electron-builder",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+    "generate-icons": "electron-icon-builder --input=./electron/electron-icon.png --output=./electron"
   },
   "main": "electron/main.js",
   "build": {
     "appId": "appId",
     "productName": "JITTOK",
+    "mac": {
+      "icon": "electron/icons/mac/icon.icns"
+    },
+    "win": {
+      "icon": "electron/icons/win/icon.ico"
+    },
+    "linux": {
+      "icon": "electron/icons/png"
+    },
     "files": [
       "dist/**/*",
       "electron/**/*"
@@ -37,6 +47,7 @@
     "cross-env": "^7.0.3",
     "electron": "^34.2.0",
     "electron-builder": "^25.1.8",
+    "electron-icon-builder": "^2.0.1",
     "svelte": "^5.20.2",
     "svelte-check": "^4.1.4",
     "typescript": "~5.7.2",
