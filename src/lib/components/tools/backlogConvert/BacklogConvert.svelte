@@ -289,8 +289,12 @@
 
     // 段階7: 基本的な変換を適用
 
-    // リスト (マークダウン - → Backlog -)
-    result = result.replace(/^(\s*)-\s+(.+)$/gm, (match, indent, content) => {
+    // まず太字を処理（箇条書きの*と混同しないように先に処理）
+    result = result.replace(/\*\*([^*]+?)\*\*/g, "''$1''");
+
+    // リスト（マークダウン - または * → Backlog -）
+    const listRegex = /^(\s*)[-*]\s+([^*][^\n]*|\*[^*][^\n]*|\*\*[^\n]*)$/gm;
+    result = result.replace(listRegex, (match, indent, content) => {
       let level;
       if (indentType === "tab") {
         // タブの場合、タブの数でレベルを計算
@@ -307,9 +311,8 @@
 
     // チェックリストは同じ形式なので変換不要
 
-    // 太字・斜体 (マークダウン ** → Backlog '', * → Backlog ''')
-    result = result.replace(/\*\*([^*]+?)\*\*/g, "''$1''");
-    result = result.replace(/\*([^*]+?)\*/g, "'''$1'''");
+    // 斜体 (マークダウン * → Backlog ''')
+    result = result.replace(/\*([^*\n]+?)\*/g, "'''$1'''");
 
     // 打ち消し線 (マークダウン ~~ → Backlog %%)
     result = result.replace(/~~([^~]+?)~~/g, "%%$1%%");
