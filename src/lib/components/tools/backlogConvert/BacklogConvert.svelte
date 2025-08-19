@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
+  import copyIcon from "../../../icons/copy.svg?raw";
 
   // リアクティブな状態
   let markdown = "";
@@ -7,6 +8,10 @@
   let autoConvert = true;
   let copySuccess = "";
   let syncScroll = true;
+  
+  // 箇条書きの設定
+  let indentType = "tab"; // "space" または "tab"
+  let spacesPerLevel = 2; // スペースの場合、階層あたりのスペース数
 
   // DOM参照
   let markdownRef: HTMLTextAreaElement;
@@ -284,9 +289,20 @@
 
     // 段階7: 基本的な変換を適用
 
-    // リスト (マークダウン - → Backlog -)
-    result = result.replace(/^(\s*)-\s+(.+)$/gm, (match, indent, content) => {
-      const level = Math.floor(indent.length / 2) + 1;
+    // まず太字を処理（箇条書きの*と混同しないように先に処理）
+    result = result.replace(/\*\*([^*]+?)\*\*/g, "''$1''");
+
+    // リスト（マークダウン - または * → Backlog -）
+    const listRegex = /^(\s*)[-*]\s+([^*][^\n]*|\*[^*][^\n]*|\*\*[^\n]*)$/gm;
+    result = result.replace(listRegex, (match, indent, content) => {
+      let level;
+      if (indentType === "tab") {
+        // タブの場合、タブの数でレベルを計算
+        level = (indent.match(/\t/g) || []).length + 1;
+      } else {
+        // スペースの場合、設定されたスペース数でレベルを計算
+        level = Math.floor(indent.length / spacesPerLevel) + 1;
+      }
       return "-".repeat(level) + " " + content;
     });
 
@@ -295,9 +311,8 @@
 
     // チェックリストは同じ形式なので変換不要
 
-    // 太字・斜体 (マークダウン ** → Backlog '', * → Backlog ''')
-    result = result.replace(/\*\*([^*]+?)\*\*/g, "''$1''");
-    result = result.replace(/\*([^*]+?)\*/g, "'''$1'''");
+    // 斜体 (マークダウン * → Backlog ''')
+    result = result.replace(/\*([^*\n]+?)\*/g, "'''$1'''");
 
     // 打ち消し線 (マークダウン ~~ → Backlog %%)
     result = result.replace(/~~([^~]+?)~~/g, "%%$1%%");
@@ -305,16 +320,28 @@
     // 単一行引用 (残った引用)
     result = result.replace(/^>\s(.+)$/gm, "> $1");
 
+    // 水平線を削除（---, ***, ___）
+    result = result.replace(/^[-*_]{3,}\s*$/gm, "");
+
     // URLの自動リンク (まだリンクになっていないURLだけ対象)
     const urlRegex = /(?<!["\[\]])(\bhttps?:\/\/[^\s<]+[^<.,:;"'\]\s])/g;
     result = result.replace(urlRegex, "[[" + "$1" + "]]");
 
-    // 段階8: プレースホルダーを元の変換後コンテンツに戻す
+    // 段階8: プレースホルダーを元の変換後コンテンツに戻し、見出しの前後の空行を削除
 
     // 見出し復元（最初に処理して他の変換に影響を与えないようにする）
     placeholders.headings.forEach((item) => {
       result = result.replace(item.placeholder, item.content);
     });
+    
+    // 空行の整理
+    result = result
+      // 1. 見出しの前後の空行を完全に削除
+      .replace(/\n+(\*+\s[^\n]+)/g, "\n$1")  // 見出しの前のすべての空行を削除して改行1つに
+      .replace(/(\*+\s[^\n]+)\n+/g, "$1\n")  // 見出しの後のすべての空行を削除して改行1つに
+      // 2. 最後に文書全体の先頭と末尾の空行を処理
+      .replace(/^\n+/, '')  // 文書先頭の空行を完全に削除
+      .replace(/\n+$/, '\n');  // 文書末尾は改行1つにする
 
     // コードブロック復元
     placeholders.codeBlocks.forEach((item) => {
@@ -383,6 +410,26 @@
           />
           <label for="syncScroll" class="option-label">スクロール同期</label>
         </div>
+        <div class="option-item">
+          <label for="indentType" class="option-label">インデントの種類:</label>
+          <select id="indentType" bind:value={indentType} class="select-input">
+            <option value="space">スペース</option>
+            <option value="tab">タブ</option>
+          </select>
+        </div>
+        {#if indentType === "space"}
+          <div class="option-item">
+            <label for="spacesPerLevel" class="option-label">階層あたりのスペース数:</label>
+            <input
+              type="number"
+              id="spacesPerLevel"
+              bind:value={spacesPerLevel}
+              min="1"
+              max="8"
+              class="number-input"
+            />
+          </div>
+        {/if}
       </div>
     </div>
 
@@ -394,20 +441,7 @@
             <span class="copy-success">{copySuccess}</span>
           {/if}
           <button on:click={copyToClipboard} class="copy-button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="copy-icon"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width={2}
-                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-              />
-            </svg>
+            {@html copyIcon}
             コピー
           </button>
         </div>
@@ -623,6 +657,23 @@
     color: #4b5563;
   }
 
+  .select-input {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
+  .number-input {
+    width: 4rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
   /* コピーボタン */
   .copy-container {
     display: flex;
@@ -650,11 +701,6 @@
 
   .copy-button:hover {
     background-color: #d1d5db;
-  }
-
-  .copy-icon {
-    height: 1rem;
-    width: 1rem;
   }
 
   textarea {

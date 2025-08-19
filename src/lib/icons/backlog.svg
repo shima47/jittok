@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#3DD4A3" />
+
+  <!-- Letter "b" - larger size and shifted right -->
+  <path
+    d="M170 100v312h85c70 0 130-52 130-117s-60-119-130-119h-20v-76h-65z"
+    fill="#FFFFFF"
+  />
+
+  <!-- Inner cutout of the "b" -->
+  <path
+    d="M235 226h20c35 0 70 30 70 69s-35 63-70 63h-20v-132z"
+    fill="#3DD4A3"
+  />
+</svg>
