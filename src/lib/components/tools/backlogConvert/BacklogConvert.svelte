@@ -320,6 +320,9 @@
     // 単一行引用 (残った引用)
     result = result.replace(/^>\s(.+)$/gm, "> $1");
 
+    // 水平線を削除（---, ***, ___）
+    result = result.replace(/^[-*_]{3,}\s*$/gm, "");
+
     // URLの自動リンク (まだリンクになっていないURLだけ対象)
     const urlRegex = /(?<!["\[\]])(\bhttps?:\/\/[^\s<]+[^<.,:;"'\]\s])/g;
     result = result.replace(urlRegex, "[[" + "$1" + "]]");
