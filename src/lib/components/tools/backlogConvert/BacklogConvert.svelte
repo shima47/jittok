@@ -321,12 +321,21 @@
     const urlRegex = /(?<!["\[\]])(\bhttps?:\/\/[^\s<]+[^<.,:;"'\]\s])/g;
     result = result.replace(urlRegex, "[[" + "$1" + "]]");
 
-    // 段階8: プレースホルダーを元の変換後コンテンツに戻す
+    // 段階8: プレースホルダーを元の変換後コンテンツに戻し、見出しの前後の空行を削除
 
     // 見出し復元（最初に処理して他の変換に影響を与えないようにする）
     placeholders.headings.forEach((item) => {
       result = result.replace(item.placeholder, item.content);
     });
+    
+    // 空行の整理
+    result = result
+      // 1. 見出しの前後の空行を完全に削除
+      .replace(/\n+(\*+\s[^\n]+)/g, "\n$1")  // 見出しの前のすべての空行を削除して改行1つに
+      .replace(/(\*+\s[^\n]+)\n+/g, "$1\n")  // 見出しの後のすべての空行を削除して改行1つに
+      // 2. 最後に文書全体の先頭と末尾の空行を処理
+      .replace(/^\n+/, '')  // 文書先頭の空行を完全に削除
+      .replace(/\n+$/, '\n');  // 文書末尾は改行1つにする
 
     // コードブロック復元
     placeholders.codeBlocks.forEach((item) => {
